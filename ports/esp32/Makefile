@@ -140,6 +140,11 @@ INC_ESPCOMP += -I$(ESPCOMP)/app_trace/include
 INC_ESPCOMP += -I$(ESPCOMP)/app_update/include
 INC_ESPCOMP += -I$(ESPCOMP)/pthread/include
 INC_ESPCOMP += -I$(ESPCOMP)/smartconfig_ack/include
+INC_ESPCOMP += -I$(ESPCOMP)/esp32-camera/driver/include
+INC_ESPCOMP += -I$(ESPCOMP)/esp32-camera/driver/private_include
+INC_ESPCOMP += -I$(ESPCOMP)/esp32-camera/conversions/include
+INC_ESPCOMP += -I$(ESPCOMP)/esp32-camera/conversions/private_include
+INC_ESPCOMP += -I$(ESPCOMP)/esp32-camera/sensors/private_include
 INC_ESPCOMP += -I$(ESPCOMP)/sdmmc/include
 
 # these flags are common to C and C++ compilation
@@ -225,6 +230,7 @@ SRC_C = \
 	machine_wdt.c \
 	mpthreadport.c \
 	machine_rtc.c \
+	modcamera.c \
 	machine_sdcard.c \
 	$(wildcard $(BOARD_DIR)/*.c) \
 	$(SRC_MOD)
@@ -391,6 +397,16 @@ ESPIDF_WPA_SUPPLICANT_O = $(patsubst %.c,%.o,\
 	$(wildcard $(ESPCOMP)/wpa_supplicant/src/*/*.c) \
 	)
 
+ESPIDF_ESP32_CAMERA_O = $(patsubst %.c,%.o, \
+	$(wildcard $(ESPCOMP)/esp32-camera/sensors/*.c) \
+	$(wildcard $(ESPCOMP)/esp32-camera/driver/*.c) \
+	$(wildcard $(ESPCOMP)/esp32-camera/conversions/*.c) \
+	)
+
+ESPIDF_ESP32_CAMERA_CXX_O = $(patsubst %.cpp,%.o, \
+	$(wildcard $(ESPCOMP)/esp32-camera/conversions/*.cpp) \
+	)
+
 ESPIDF_SDMMC_O = $(patsubst %.c,%.o,$(wildcard $(ESPCOMP)/sdmmc/*.c))
 
 OBJ_ESPIDF =
@@ -432,6 +448,8 @@ $(eval $(call gen_espidf_lib_rule,lwip,$(ESPIDF_LWIP_O)))
 $(eval $(call gen_espidf_lib_rule,mbedtls,$(ESPIDF_MBEDTLS_O)))
 $(eval $(call gen_espidf_lib_rule,mdns,$(ESPIDF_MDNS_O)))
 $(eval $(call gen_espidf_lib_rule,wpa_supplicant,$(ESPIDF_WPA_SUPPLICANT_O)))
+$(eval $(call gen_espidf_lib_rule,esp32_camera,$(ESPIDF_ESP32_CAMERA_O)))
+$(eval $(call gen_espidf_lib_rule,esp32_camera_cxx,$(ESPIDF_ESP32_CAMERA_CXX__O)))
 $(eval $(call gen_espidf_lib_rule,sdmmc,$(ESPIDF_SDMMC_O)))
 
 # Create all destination build dirs before compiling IDF source
